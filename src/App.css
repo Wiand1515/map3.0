@@ -1,38 +1,97 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.close {
+  display: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.open {
+  display: inherit;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.mapboxgl-ctrl-geocoder--powered-by {
+  display: none !important;
+}
+
+.hide {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib-inner {
+  display: none !important;
+}
+
+.mapboxgl-popup-close-button {
+  width: 1rem;
+}
+
+.mapboxgl-ctrl-geocoder {
+  width: 100% !important;
+}
+
+.searchBar-container {
+  background-color: white;
+  height: 3rem;
+  z-index: 999;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.loading-map {
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100vw;
 }
 
-.App-link {
-  color: #61dafb;
+.filter-btn {
+  border: 1px solid #ced4da;
+  background-color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.mapboxgl-popup-content {
+  width: 20rem;
+}
+.btn-restrictions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 40px !important;
+  padding: 0;
+  width: 5rem;
+}
+
+.list-item {
+  border-bottom: 1px solid #ced4da;
+}
+
+::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  background-clip: padding-box;
+  border-radius: 100vw;
+  margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(131, 158, 160, 0.8);
+  border-radius: 100vw;
+  border: 0.1em solid hsl(120 50% 50% / 1);
+}
+.active-item {
+  background-color: rgba(232, 253, 255, 0.8);
+}
+
+.active-item .active-title {
+  color: #0275d8;
 }
