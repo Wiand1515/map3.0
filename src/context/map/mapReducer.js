@@ -6,10 +6,10 @@ export const mapReducer = (state, action) => {
         mapCnC: action.payload,
       };
 
-    case "setUnactiveItems":
+    case "setMarkers":
       return {
         ...state,
-        activeItem: false
+        markers: action.payload
       }
 
     default:

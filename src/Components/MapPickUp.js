@@ -1,7 +1,7 @@
 import mapboxGl, { Map, Marker } from "mapbox-gl";
 import React, { useContext, useEffect, useRef } from "react";
 import { MapContext, PlacesContext } from "../context";
-import { createPopUp, getBbox } from "../helpers";
+import { createPopUp } from "../helpers";
 import ClusterIcon from "../assets/map-icons/ClusterIcon.png";
 import PinflagIcon from "../assets/map-icons/PinflagIcon.png";
 import PinflagMallPlazaIcon from "../assets/map-icons/PinflagMallplazaIcon.png";
@@ -11,22 +11,20 @@ import { BtnMyLocation } from "./BtnMyLocation";
 mapboxGl.accessToken =
   "pk.eyJ1IjoicGlubWFwdmV1cyIsImEiOiJjbDBsZ2IyaTMwcWJ3M2tuZXh1c3V3cjFsIn0.yuAEHzW6Ns9m5zBD5A5LtA";
 
-function MapPickUp() {
+function MapPickUp({ toggle }) {
   const { setMap } = useContext(MapContext);
-  const { isLoading, userLocation, geojson, sortGeojson } =
-    useContext(PlacesContext);
+  const { isLoading, userLocation, geojson } = useContext(PlacesContext);
 
   const mapContainer = useRef(null);
   const map = useRef(null);
 
   useEffect(() => {
     if (!isLoading) {
-      if (map.current) return;
       map.current = new Map({
         container: mapContainer.current,
         style: "mapbox://styles/pinmapveus/cl0lgcto8000r15r0m5p6hpa6",
         center: userLocation,
-        zoom: 14,
+        zoom: 15,
       });
       setMap(map.current);
       /* ---------------------------------- */
@@ -105,21 +103,18 @@ function MapPickUp() {
         map.current.on("click", "unclustered-pinpoint", (e) => {
           const feature = e.features[0];
 
-          const element = document.getElementById(
-            `item-${feature.properties.id}`
-          );
-          const activeElements = document.getElementsByClassName("open");
+          map.current.flyTo({
+            zoom: 15,
+            center: feature.geometry.coordinates,
+          });
 
-          for (let i = 0; i < activeElements.length; i++) {
-            activeElements[i].classList.replace("open", "close");
-          }
-          element.classList.replace("close", "open");
+          toggle(feature.properties.id);
 
-          createPopUp(
-            feature.geometry.coordinates,
-            map.current,
-            feature.properties
-          );
+          createPopUp(feature.geometry.coordinates, map.current, {
+            title: feature.properties.title,
+            distance: feature.properties.distance,
+            price: feature.properties.price,
+          });
         });
 
         //Cluster explore on click
@@ -159,23 +154,8 @@ function MapPickUp() {
       /* ---------------------------------- */
       /* END MAP ICONS AND ICON TRIGGERS    */
       /* ---------------------------------  */
-
-      map.current.once("idle", () => {
-        const geolocateResult = {
-          coordinates: userLocation,
-        };
-
-        createPopUp(geojson.features[0].geometry.coordinates, map.current, {
-          title: "Mapa cargado",
-        });
-
-        const bbox = getBbox(geojson, 0, geolocateResult);
-        map.current.fitBounds(bbox, { padding: 100 });
-      });
-
-      console.log(geojson.features[0]);
     }
-  }, [setMap, geojson, userLocation, isLoading, sortGeojson]);
+  }, [setMap, geojson, userLocation, isLoading, toggle]);
 
   if (isLoading) {
     return <Loading />;
@@ -193,7 +173,7 @@ function MapPickUp() {
           borderRadius: "1rem",
         }}
       />
-      <BtnMyLocation />
+      <BtnMyLocation toggle={toggle} />
     </>
   );
 }

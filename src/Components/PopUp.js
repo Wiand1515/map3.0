@@ -1,8 +1,15 @@
 import styled from "styled-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import pinpointIcon from "../assets/map-icons/PinflagIcon.png";
+import { distanceConverter } from "../helpers";
 
-export const PopUp = ({ options, price = "3200" }) => {
+export const PopUp = ({ options }) => {
+  const [distanceConverted, setDistanceConverted] = useState(null);
+
+  useEffect(() => {
+    distanceConverter(options.distance, setDistanceConverted);
+  }, [options.distance]);
+
   return (
     <PopUpContainer>
       <div className="image-icon-container">
@@ -11,10 +18,12 @@ export const PopUp = ({ options, price = "3200" }) => {
       <div className="row-display">
         <div className="info-txt-container">
           <h2 className="pointName-info-txt">{options.title}</h2>
-          <span className="distance-info-txt text-muted">{options.distance}</span>
+          <span className="distance-info-txt text-muted">
+            {distanceConverted}
+          </span>
         </div>
         <div className="pricing-delivery-container">
-          <p className="pricing-txt">${price}</p>
+          <p className="pricing-txt">${options.price}</p>
         </div>
       </div>
     </PopUpContainer>
@@ -53,7 +62,6 @@ const PopUpContainer = styled.div`
     justify-content: space-between;
   }
 
-
   .pointName-info-txt {
     font-size: 1rem;
     padding: 0.3rem;
@@ -62,7 +70,7 @@ const PopUpContainer = styled.div`
     position: relative;
   }
 
-  .distance-info-txt{
+  .distance-info-txt {
     font-size: 0.9rem;
     padding-left: 0.3rem;
   }

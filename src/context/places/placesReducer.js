@@ -28,6 +28,13 @@ export const placesReducer = (state, action) => {
       };
     }
 
+    case "isSortingPoints": {
+      return {
+        ...state,
+        isSortingPoints: action.payload 
+      }
+    }
+
     default:
       return state;
   }

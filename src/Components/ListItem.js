@@ -1,95 +1,91 @@
-import { MapContext } from "../context";
+import { MapContext, PlacesContext } from "../context";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createPopUp } from "../helpers";
+import { createPopUp, distanceConverter } from "../helpers";
 
-function ListItem({
-  title,
-  id,
-  distance,
-  coords,
-  address,
-  district,
-  region,
-  index,
-}) {
-  const { mapCnC, setActiveItem } = useContext(MapContext);
+function ListItem({ coords, id, index, isActive, options, toggle }) {
+  const { mapCnC } = useContext(MapContext);
+  const { geojson } = useContext(PlacesContext);
 
   const myRef = useRef();
-  const [isOpen, setIsOpen] = useState(false);
   const [distanceConverted, setDistanceConverted] = useState(null);
-  // const [isFirstElement, setIsFirstElement] = useState(null);
-  const conditionalClassName = isOpen ? "open" : "close";
-
-  const distanceConverter = (distance) => {
-    let roundedDistance = Math.round(distance * 1000);
-
-    if (roundedDistance > 1000) {
-      setDistanceConverted(`${Math.round(distance * 100) / 100} Km`);
-    } else {
-      setDistanceConverted(`${roundedDistance} m`);
-    }
-  };
+  const conditionalClassName = isActive ? "open" : "close";
 
   useEffect(() => {
-    distanceConverter(distance);
-  }, [distance]);
+    if (!mapCnC) return;
+
+    distanceConverter(options.distance, setDistanceConverted);
+    if (index === 0) {
+      toggle(id);
+    }
+
+    const popUps = document.getElementsByClassName("mapboxgl-popup");
+    /** Check if there is already a popup on the map and if so, remove it */
+    if (popUps[0]) popUps[0].remove();
+
+    createPopUp(geojson.features[0].geometry.coordinates, mapCnC, {
+      title: geojson.features[0].properties.title,
+      distance: geojson.features[0].properties.distance,
+      price: geojson.features[0].properties.price,
+    });
+  }, [options.distance, geojson, toggle, index, id, mapCnC]);
 
   const popUpOptions = {
-    title,
-    distance: distanceConverted,
+    title: options.title,
+    distance: options.distance,
+    price: options.price,
   };
 
   const handleClick = () => {
     if (!myRef.current) return;
-    setActiveItem();
 
-    setIsOpen(!isOpen);
+    toggle(id);
 
     mapCnC.flyTo({
       zoom: 15,
       center: coords,
     });
 
-    createPopUp(coords, mapCnC, popUpOptions);
+    if (!isActive) {
+      createPopUp(coords, mapCnC, popUpOptions);
+    }
   };
 
   return (
     <div>
       <div
-        className={`list-item py-1 ${isOpen && "active-item"}`}
+        className={`list-item py-1 ${isActive && "active-item"}`}
         onClick={() => handleClick()}
         style={{ cursor: "pointer" }}
         id={id}
         ref={myRef}
       >
-        <div className="d-flex justify-content-between my-1">
-          <p className="h5 active-title">{title}</p>
-          {isOpen && (
-            <button className="btn btn-outline-primary btn-restrictions">
-              {distanceConverted}
-            </button>
-          )}
-        </div>
-          {!isOpen && 
-            <p className="text-muted">{district}, Chile</p>
-          }
+        <div className="container">
+          <div className="d-flex justify-content-between my-1">
+            <p className="h5 active-title">{options.title}</p>
+            {isActive && (
+              <button className="btn btn-outline-primary btn-restrictions">
+                {distanceConverted}
+              </button>
+            )}
+          </div>
+          {!isActive && <p className="text-muted">{options.district}, Chile</p>}
 
-        <div id={`item-${id}`} className={`${conditionalClassName}`}>
-          {isOpen && (
-            <>
-              <div>
-                {address}, {district}
-              </div>
-              <div>{region}, Chile.</div>
-              <div className="my-3">
-                <div className="text-muted">
-                  Lunes a Viernes - 07:00 a 16:00
+          <div id={`item-${id}`} className={`${conditionalClassName}`}>
+            {isActive && (
+              <>
+                <div>
+                  {options.address}, {options.district}
                 </div>
-                <div className="text-muted">Sábado - 12:00 a 19:30</div>
-                <div className="text-muted">Domingo - Cerrado</div>
-              </div>
-            </>
-          )}
+                <div>{options.region}, Chile.</div>
+                <div className="my-3">
+                  {options.schedules &&
+                    options.schedules.map((schedule) => (
+                      <div className="text-muted">{schedule}</div>
+                    ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

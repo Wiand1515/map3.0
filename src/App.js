@@ -3,6 +3,8 @@ import { MapProvider, PlacesProvider } from "./context";
 import MapPickUpScreen from "./screens/MapPickUpScreen";
 
 function App() {
+  
+
   return (
     <PlacesProvider>
       <MapProvider>

@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Arial, Helvetica, sans-serif';
 }
 
 .close {
@@ -38,7 +39,11 @@
   height: 3rem;
   z-index: 999;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  padding-left: 2rem;
+  padding-right: 1.8rem;
 }
+
 
 .loading-map {
   background-color: rgba(0, 0, 0, 0.8);
@@ -94,4 +99,13 @@
 
 .active-item .active-title {
   color: #0275d8;
+}
+
+.searchBar-container:focus ~ .searchbar-placeholder,
+.searchBar-container:valid ~ .searchbar-placeholder {
+  display: none;
+}
+
+.unactive {
+  display: none !important; 
 }

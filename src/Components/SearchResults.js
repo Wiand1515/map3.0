@@ -1,17 +1,20 @@
 import React, { useContext } from "react";
 import { MapContext, PlacesContext } from "../context";
-import { getBbox } from "../helpers";
+import { createPopUp, getBbox } from "../helpers";
 
 export const SearchResults = () => {
   const { places, cleanPlaces, geojson, sortGeojson } =
     useContext(PlacesContext);
-  const { mapCnC } = useContext(MapContext);
+  const { mapCnC, createPlaceMarker } = useContext(MapContext);
 
   const onClick = (place) => {
     mapCnC.flyTo({
       zoom: 16,
       center: place.center,
     });
+
+    createPlaceMarker(place, mapCnC);
+
 
     const popUps = document.getElementsByClassName("mapboxgl-popup");
     /** Check if there is already a popup on the map and if so, remove it */
@@ -22,6 +25,13 @@ export const SearchResults = () => {
     const geolocateResult = {
       coordinates: place.center,
     };
+
+    createPopUp(geojson.features[0].geometry.coordinates, mapCnC, {
+      title: geojson.features[0].properties.title,
+      distance: geojson.features[0].properties.distance,
+      price: geojson.features[0].properties.price
+
+    });
 
     const bbox = getBbox(geojson, 0, geolocateResult);
     mapCnC.fitBounds(bbox, { padding: 100 });

@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { geojsonApi, searchAPI } from "../../api";
 import { GEOJSON_URL } from "../../constants/url";
 import { getUserLocation } from "../../helpers";
@@ -6,13 +6,14 @@ import { PlacesContext } from "./PlacesContext";
 import { placesReducer } from "./placesReducer";
 import * as turf from "@turf/turf";
 
-
 const INITIAL_STATE = {
   isLoading: true,
   userLocation: undefined,
   isLoadingPlaces: false,
   places: [],
   geojson: null,
+  isAvailable: false,
+  warehouseData: null
 };
 
 export const PlacesProvider = ({ children }) => {
@@ -34,38 +35,43 @@ export const PlacesProvider = ({ children }) => {
   }, []);
 
   const searchPlacesByTerm = async (query) => {
-    if (query.length === 0) {
+    if (query.length <= 1) {
       dispatch({ type: "setPlaces", payload: [] });
-      return [];
     }
 
     dispatch({ type: "setLoadingPlaces" });
 
-    const resp = await searchAPI.get(`/${query}.json`);
+    if (query.length > 1) {
+      const resp = await searchAPI.get(`/${query}.json`);
 
-    console.log(resp.data.features);
+      dispatch({ type: "setPlaces", payload: resp.data.features });
 
-    dispatch({ type: "setPlaces", payload: resp.data.features });
-
-    return resp.data;
+      return resp.data;
+    }
   };
 
-  const sortGeojson = (geojson, userCoordinate) => {
-    const options = {units: "kilometers"};
+  const sortGeojson = useCallback(
+    (geojson, userCoordinate) => {
+      const options = { units: "kilometers" };
 
-    for (const point of geojson.features) {
-      point.properties.distance = turf.distance(userCoordinate, point.geometry, options);
-    } 
+      for (const point of geojson.features) {
+        point.properties.distance = turf.distance(
+          userCoordinate,
+          point.geometry,
+          options
+        );
+      }
 
-    geojson.features.sort((pointA, pointB) => {
-      if (pointA.properties.distance > pointB.properties.distance) return 1;
-      if (pointA.properties.distance < pointB.properties.distance) return -1;
-      return 0;
-    });
+      geojson.features.sort((pointA, pointB) => {
+        if (pointA.properties.distance > pointB.properties.distance) return 1;
+        if (pointA.properties.distance < pointB.properties.distance) return -1;
+        return 0;
+      });
 
-    dispatch({type: "setGeojson", payload: geojson})
-  }
-  
+      dispatch({ type: "setGeojson", payload: geojson });
+    },
+    [dispatch]
+  );
 
   const cleanPlaces = () => {
     dispatch({ type: "setPlaces", payload: [] });
@@ -80,7 +86,7 @@ export const PlacesProvider = ({ children }) => {
         // Methods
         searchPlacesByTerm,
         cleanPlaces,
-        sortGeojson
+        sortGeojson,
       }}
     >
       {children}
