@@ -1,6 +1,7 @@
 import "./App.css";
 import { MapProvider, PlacesProvider } from "./context";
-import MapPickUpScreen from "./screens/MapPickUpScreen";
+// import MapPickUpScreen from "./screens/MapPickUpScreen";
+import MapSelection from "./screens/MapSelection";
 
 function App() {
   
@@ -8,7 +9,8 @@ function App() {
   return (
     <PlacesProvider>
       <MapProvider>
-        <MapPickUpScreen />
+        {/* <MapPickUpScreen /> */}
+        <MapSelection />
       </MapProvider>
     </PlacesProvider>
   );

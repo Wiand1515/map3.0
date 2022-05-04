@@ -1,2 +1,2 @@
-export const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoicGlubWFwdmV1cyIsImEiOiJjbDBsZ2IyaTMwcWJ3M2tuZXh1c3V3cjFsIn0.yuAEHzW6Ns9m5zBD5A5LtA"
-export const MAPBOX_STYLE_URL = "mapbox://styles/pinmapveus/cl0lgcto8000r15r0m5p6hpa6"
+export const MAPBOX_ACCESS_TOKEN = "pk.eyJ1Ijoid2lhbmQxNTE1IiwiYSI6ImNrcXlmMGdxczB2OXEydnBqbWlrY2dua2YifQ.dZCCMVMLx6ILAp40fLczyg"
+export const MAPBOX_STYLE_URL = "mapbox://styles/wiand1515/cl2pnfap3000g15lbb07425l5"

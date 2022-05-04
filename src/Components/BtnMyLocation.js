@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
 import { MapContext, PlacesContext } from "../context";
-import { createPopUp, getBbox } from "../helpers";
 import { FaLocationArrow } from "react-icons/fa";
 
-export const BtnMyLocation = ({toggle}) => {
+export const BtnMyLocation = () => {
   const { mapCnC } = useContext(MapContext);
   const { userLocation, sortGeojson, geojson } = useContext(PlacesContext);
 
@@ -16,23 +15,7 @@ export const BtnMyLocation = ({toggle}) => {
       center: userLocation,
     });
 
-    
-    const geolocateResult = {
-      coordinates: userLocation,
-    };
-    
     sortGeojson(geojson, userLocation);
-    
-    createPopUp(geojson.features[0].geometry.coordinates, mapCnC, {
-      title: geojson.features[0].properties.title,
-      distance: geojson.features[0].properties.distance,
-      price: geojson.features[0].properties.price
-    });
-    
-    const bbox = getBbox(geojson, 0, geolocateResult);
-    mapCnC.fitBounds(bbox, { padding: 100 });
-    
-    toggle(geojson.features[0].properties.id)
   };
 
   return (
@@ -41,7 +24,7 @@ export const BtnMyLocation = ({toggle}) => {
       onClick={onCLick}
       style={{
         position: "relative",
-        top: "-530px",
+        top: "-560px",
         left: "20px",
         borderRadius: "50%",
         width: "3rem",

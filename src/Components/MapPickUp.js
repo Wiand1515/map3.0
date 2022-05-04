@@ -7,9 +7,9 @@ import PinflagIcon from "../assets/map-icons/PinflagIcon.png";
 import PinflagMallPlazaIcon from "../assets/map-icons/PinflagMallplazaIcon.png";
 import { Loading } from "./Loading";
 import { BtnMyLocation } from "./BtnMyLocation";
+import { MAPBOX_ACCESS_TOKEN, MAPBOX_STYLE_URL } from "../constants/mapboxConstants";
 
-mapboxGl.accessToken =
-  "pk.eyJ1IjoicGlubWFwdmV1cyIsImEiOiJjbDBsZ2IyaTMwcWJ3M2tuZXh1c3V3cjFsIn0.yuAEHzW6Ns9m5zBD5A5LtA";
+mapboxGl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 function MapPickUp({ toggle }) {
   const { setMap } = useContext(MapContext);
@@ -20,9 +20,11 @@ function MapPickUp({ toggle }) {
 
   useEffect(() => {
     if (!isLoading) {
+      if (map.current) return;
+
       map.current = new Map({
         container: mapContainer.current,
-        style: "mapbox://styles/pinmapveus/cl0lgcto8000r15r0m5p6hpa6",
+        style: MAPBOX_STYLE_URL,
         center: userLocation,
         zoom: 15,
       });
@@ -102,6 +104,7 @@ function MapPickUp({ toggle }) {
         // Unclusted Point Triggers
         map.current.on("click", "unclustered-pinpoint", (e) => {
           const feature = e.features[0];
+          console.log(e.features);
 
           map.current.flyTo({
             zoom: 15,
@@ -174,6 +177,19 @@ function MapPickUp({ toggle }) {
         }}
       />
       <BtnMyLocation toggle={toggle} />
+      <button className="btn btn-primary"
+        style={{
+          position: "relative",
+          top: "-105px",
+          left: "67%",
+          padding: "0.2em 2.5em",
+          fontSize: "1.2rem",
+          backgroundColor: "",
+          zIndex: 9999,
+        }}
+      >
+        Elegir punto
+      </button>
     </>
   );
 }

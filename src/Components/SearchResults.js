@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { MapContext, PlacesContext } from "../context";
-import { createPopUp, getBbox } from "../helpers";
 
 export const SearchResults = () => {
   const { places, cleanPlaces, geojson, sortGeojson } =
@@ -15,26 +14,12 @@ export const SearchResults = () => {
 
     createPlaceMarker(place, mapCnC);
 
-
     const popUps = document.getElementsByClassName("mapboxgl-popup");
     /** Check if there is already a popup on the map and if so, remove it */
     if (popUps[0]) popUps[0].remove();
 
+    console.log("lugar",place);
     sortGeojson(geojson, place.center);
-
-    const geolocateResult = {
-      coordinates: place.center,
-    };
-
-    createPopUp(geojson.features[0].geometry.coordinates, mapCnC, {
-      title: geojson.features[0].properties.title,
-      distance: geojson.features[0].properties.distance,
-      price: geojson.features[0].properties.price
-
-    });
-
-    const bbox = getBbox(geojson, 0, geolocateResult);
-    mapCnC.fitBounds(bbox, { padding: 100 });
 
     cleanPlaces();
   };

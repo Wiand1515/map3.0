@@ -1,10 +1,9 @@
-import { MapContext, PlacesContext } from "../context";
+import { MapContext } from "../context";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { createPopUp, distanceConverter } from "../helpers";
 
 function ListItem({ coords, id, index, isActive, options, toggle }) {
   const { mapCnC } = useContext(MapContext);
-  const { geojson } = useContext(PlacesContext);
 
   const myRef = useRef();
   const [distanceConverted, setDistanceConverted] = useState(null);
@@ -14,20 +13,7 @@ function ListItem({ coords, id, index, isActive, options, toggle }) {
     if (!mapCnC) return;
 
     distanceConverter(options.distance, setDistanceConverted);
-    if (index === 0) {
-      toggle(id);
-    }
-
-    const popUps = document.getElementsByClassName("mapboxgl-popup");
-    /** Check if there is already a popup on the map and if so, remove it */
-    if (popUps[0]) popUps[0].remove();
-
-    createPopUp(geojson.features[0].geometry.coordinates, mapCnC, {
-      title: geojson.features[0].properties.title,
-      distance: geojson.features[0].properties.distance,
-      price: geojson.features[0].properties.price,
-    });
-  }, [options.distance, geojson, toggle, index, id, mapCnC]);
+  }, [options.distance, mapCnC]);
 
   const popUpOptions = {
     title: options.title,
@@ -79,8 +65,10 @@ function ListItem({ coords, id, index, isActive, options, toggle }) {
                 <div>{options.region}, Chile.</div>
                 <div className="my-3">
                   {options.schedules &&
-                    options.schedules.map((schedule) => (
-                      <div className="text-muted">{schedule}</div>
+                    options.schedules.map((schedule, index) => (
+                      <div key={`schedule-${index}`} className="text-muted">
+                        {schedule}
+                      </div>
                     ))}
                 </div>
               </>
