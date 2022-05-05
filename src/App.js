@@ -1,18 +1,18 @@
 import "./App.css";
-import { MapProvider, PlacesProvider } from "./context";
-// import MapPickUpScreen from "./screens/MapPickUpScreen";
-import MapSelection from "./screens/MapSelection";
+import { MapProvider, PlacesProvider, UserProvider } from "./context";
+import MapDeliveryScreen from "./screens/MapDeliveryScreen";
 
 function App() {
-  
-
   return (
-    <PlacesProvider>
-      <MapProvider>
-        {/* <MapPickUpScreen /> */}
-        <MapSelection />
-      </MapProvider>
-    </PlacesProvider>
+    <UserProvider>
+      <PlacesProvider>
+        <MapProvider>
+          {/* <MapPickUpScreen /> */}
+
+          <MapDeliveryScreen />
+        </MapProvider>
+      </PlacesProvider>
+    </UserProvider>
   );
 }
 

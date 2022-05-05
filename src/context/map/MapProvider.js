@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   mapCnC: null,
   activeItem: false,
   markers: [],
+  isShow: true,
 };
 
 export const MapProvider = ({ children }) => {
@@ -32,10 +33,6 @@ export const MapProvider = ({ children }) => {
     dispatch({ type: "setMarkers", payload: newMarkers });
   };
 
-  
-
-
-
   const setMap = useCallback(
     (map = Map) => {
       map.dragRotate.disable();
@@ -47,8 +44,6 @@ export const MapProvider = ({ children }) => {
     },
     [dispatch]
   );
-
-
 
   return (
     <MapContext.Provider

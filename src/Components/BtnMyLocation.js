@@ -4,7 +4,8 @@ import { FaLocationArrow } from "react-icons/fa";
 
 export const BtnMyLocation = () => {
   const { mapCnC } = useContext(MapContext);
-  const { userLocation, sortGeojson, geojson } = useContext(PlacesContext);
+  const { userLocation, sortGeojson, geojson, isDelivery } =
+    useContext(PlacesContext);
 
   const onCLick = () => {
     if (!mapCnC) throw new Error("Map not Ready");
@@ -15,6 +16,8 @@ export const BtnMyLocation = () => {
       center: userLocation,
     });
 
+    if (isDelivery) return;
+
     sortGeojson(geojson, userLocation);
   };
 
@@ -24,8 +27,8 @@ export const BtnMyLocation = () => {
       onClick={onCLick}
       style={{
         position: "relative",
-        top: "-560px",
-        left: "20px",
+        top: "-540px",
+        left: "15px",
         borderRadius: "50%",
         width: "3rem",
         height: "3rem",

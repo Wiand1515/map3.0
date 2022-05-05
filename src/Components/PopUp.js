@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
-import pinpointIcon from "../assets/map-icons/PinflagIcon.png";
+import pinpointIcon from "../assets/map/PinflagIcon.png";
 import { distanceConverter } from "../helpers";
 
 export const PopUp = ({ options }) => {

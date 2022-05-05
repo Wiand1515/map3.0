@@ -31,8 +31,24 @@ export const placesReducer = (state, action) => {
     case "isSortingPoints": {
       return {
         ...state,
-        isSortingPoints: action.payload 
-      }
+        isSortingPoints: action.payload,
+      };
+    }
+
+    case "setReverseGeocoderAddress": {
+      return {
+        ...state,
+        isDelivery: true,
+        reverseGeocodingAddress: action.payload,
+      };
+    }
+
+    case "cleanReverseGeocoderAddress": {
+      return {
+        ...state,
+        isDelivery: false,
+        reverseGeocodingAddress: ''
+      };
     }
 
     default:

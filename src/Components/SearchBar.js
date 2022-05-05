@@ -1,5 +1,5 @@
-import { useContext, useRef, useState } from "react";
-import { PlacesContext, MapContext } from "../context";
+import { useContext, useEffect, useRef, useState } from "react";
+import { PlacesContext, MapContext, UserContext } from "../context";
 import { SearchResults } from "./SearchResults";
 import { FaSearch } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
@@ -9,9 +9,22 @@ export const SearchBar = () => {
   const [value, setValue] = useState("");
   const [show, setShow] = useState(false);
 
-  const { searchPlacesByTerm, cleanPlaces, places, geojson, sortGeojson } =
-    useContext(PlacesContext);
+  const {
+    searchPlacesByTerm,
+    cleanPlaces,
+    places,
+    geojson,
+    sortGeojson,
+    reverseGeocodingAddress,
+    cleanReverseGeolocateAddress,
+  } = useContext(PlacesContext);
   const { mapCnC, createPlaceMarker } = useContext(MapContext);
+  const { cleanUserAddress } = useContext(UserContext);
+
+  useEffect(() => {
+    setValue(reverseGeocodingAddress);
+    setShow(true);
+  }, [reverseGeocodingAddress]);
 
   const onQueryChanged = (event) => {
     setValue(event.target.value);
@@ -37,15 +50,10 @@ export const SearchBar = () => {
 
     if (places.length < 1) return;
 
-    console.log(places[0]);
-
-
     mapCnC.flyTo({
       zoom: 16,
       center: places[0].geometry.coordinates,
     });
-
-    console.log(places[0].geometry.coordinates)
 
     createPlaceMarker(places[0], mapCnC);
 
@@ -55,6 +63,8 @@ export const SearchBar = () => {
 
     sortGeojson(geojson, places[0].geometry.coordinates);
 
+    setValue(places[0].place_name_es);
+
     cleanPlaces();
   };
 
@@ -62,6 +72,8 @@ export const SearchBar = () => {
     setValue("");
     cleanPlaces();
     setShow(false);
+    cleanReverseGeolocateAddress();
+    cleanUserAddress();
   };
 
   return (
@@ -73,6 +85,7 @@ export const SearchBar = () => {
           placeholder="Buscar lugar..."
           onChange={(event) => onQueryChanged(event)}
           value={value}
+          
         />
       </form>
 
@@ -109,7 +122,7 @@ export const SearchBar = () => {
         <FaSearch />
       </span>
 
-      <SearchResults />
+      <SearchResults setter={setValue} />
     </div>
   );
 };

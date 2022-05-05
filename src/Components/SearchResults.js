@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { MapContext, PlacesContext } from "../context";
 
-export const SearchResults = () => {
+export const SearchResults = ({setter}) => {
   const { places, cleanPlaces, geojson, sortGeojson } =
     useContext(PlacesContext);
   const { mapCnC, createPlaceMarker } = useContext(MapContext);
@@ -18,8 +18,9 @@ export const SearchResults = () => {
     /** Check if there is already a popup on the map and if so, remove it */
     if (popUps[0]) popUps[0].remove();
 
-    console.log("lugar",place);
     sortGeojson(geojson, place.center);
+
+    setter(place.place_name_es)
 
     cleanPlaces();
   };
@@ -36,7 +37,7 @@ export const SearchResults = () => {
           style={{ cursor: "pointer", position: "relative" }}
           onClick={() => onClick(place)}
         >
-          <h6>{place.text_es}</h6>
+          <h6>{place.text_es} {place.address}</h6>
           <p className="text-muted" style={{ fontSize: "0.8rem" }}>
             {place.place_name}
           </p>

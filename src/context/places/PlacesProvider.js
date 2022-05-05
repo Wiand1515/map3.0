@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useReducer } from "react";
-import { geojsonApi, searchAPI } from "../../api";
+import { useCallback, useContext, useEffect, useReducer } from "react";
+import { geojsonApi, reverseGeolocateAPI, searchAPI } from "../../api";
 import { GEOJSON_URL } from "../../constants/url";
 import { getUserLocation } from "../../helpers";
 import { PlacesContext } from "./PlacesContext";
 import { placesReducer } from "./placesReducer";
 import * as turf from "@turf/turf";
+import { UserContext } from "../user/UserContext";
 
 const INITIAL_STATE = {
   isLoading: true,
@@ -13,11 +14,15 @@ const INITIAL_STATE = {
   places: [],
   geojson: null,
   isAvailable: false,
-  warehouseData: null
+  warehouseData: null,
+  reverseGeocodingAddress: "",
+  isDelivery: true,
 };
 
 export const PlacesProvider = ({ children }) => {
   const [state, dispatch] = useReducer(placesReducer, INITIAL_STATE);
+
+  const { setUserAddress } = useContext(UserContext);
 
   useEffect(() => {
     getUserLocation().then((lngLat) =>
@@ -77,7 +82,26 @@ export const PlacesProvider = ({ children }) => {
     dispatch({ type: "setPlaces", payload: [] });
   };
 
-  
+  const reverseGeolocate = (coord) => {
+    reverseGeolocateAPI.get(`/${coord.lng},${coord.lat}.json`).then((res) => {
+      setUserAddress(res.data.features[0]);
+
+      dispatch({
+        type: "setReverseGeocoderAddress",
+        payload: res.data.features[0].place_name_es,
+      });
+    });
+  };
+
+  const cleanReverseGeolocateAddress = () => {
+    dispatch({
+      type: "cleanReverseGeocoderAddress",
+      payload: {
+        isDelivery: false,
+        reverseGeocodingAddress: "",
+      },
+    });
+  };
 
   return (
     <PlacesContext.Provider
@@ -87,6 +111,8 @@ export const PlacesProvider = ({ children }) => {
         searchPlacesByTerm,
         cleanPlaces,
         sortGeojson,
+        reverseGeolocate,
+        cleanReverseGeolocateAddress,
       }}
     >
       {children}
